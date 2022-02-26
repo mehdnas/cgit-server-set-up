@@ -20,7 +20,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "testServer" do |ts|
     ts.vm.hostname = "raspberrypi.test"
-    ts.vm.network :private_network, ip: "10.0.4.8"
+    ts.vm.network :private_network, ip: "192.168.2.11"
   end
 
 end
