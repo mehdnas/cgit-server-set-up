@@ -1,0 +1,40 @@
+---
+- hosts: server
+  become: true
+
+  vars_files:
+    - vars.yml
+
+  pre_tasks:
+
+    - name: Update apt cache if needed
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+  tasks:
+
+    - name: Ensure parted is installed
+      apt:
+        name: parted
+        state: present
+
+    - name: Read disk information
+      parted:
+        device: '{{ disk_device }}'
+        unit: MiB
+      register: device_info
+
+    - name: Delete all partitions form disk
+      parted:
+        device: '{{ disk_device }}'
+        number: '{{ item.num }}'
+        state: absent
+      loop: '{{ device_info.partitions }}'
+
+    - name: Create a new primary partition for LVM
+      parted:
+        device: '{{ disk_device }}'
+        number: 1
+        flags: [ lvm ]
+        state: present
