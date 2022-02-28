@@ -14,9 +14,11 @@
 
   tasks:
 
-    - name: Ensure parted is installed
+    - name: Ensure parted and lvm2 are installed
       apt:
-        name: parted
+        name:
+          - parted
+          - lvm2
         state: present
 
     - name: Read disk information
@@ -25,7 +27,8 @@
         unit: MiB
       register: device_info
 
-    - name: Delete all partitions form disk
+    - name: Delete all partitions form disk if the lvm haven't been set up.
+      when: device_info.partitions[0].flags != [ "lvm" ]
       parted:
         device: '{{ disk_device }}'
         number: '{{ item.num }}'
@@ -36,5 +39,11 @@
       parted:
         device: '{{ disk_device }}'
         number: 1
-        flags: [ lvm ]
+        flags: [ "lvm" ]
         state: present
+
+    - name: Set up volume group on the partition
+      lvg:
+        vg: "{{ vg_name }}"
+        pvs: "{{ resulting_partition }}"
+        pesize: 16M

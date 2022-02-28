@@ -1,2 +1,4 @@
 ---
-disk_device: /dev/sda
+- disk_device: /dev/sda
+- resulting_partition: /dev/sda1
+- vg_name: raspi_server_vg
