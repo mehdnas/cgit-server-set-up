@@ -31,7 +31,7 @@
       debug:
         msg: "{{ device_info }}"
 
-    - name: Delete all partitions form disk if the lvm haven't been set up.
+    - name: Delete all partitions form disk if vg haven't been set up.
       parted:
         device: '{{ disk_device }}'
         number: '{{ item.num }}'

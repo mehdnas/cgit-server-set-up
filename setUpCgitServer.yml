@@ -1,0 +1,41 @@
+---
+- hosts: server
+  become: true
+
+  vars_files:
+    - vars.yml
+
+  pre_tasks:
+
+    - name: Update apt cache if needed
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+  tasks:
+
+    - name: Ensure necesary packages are installed.
+      apt:
+        name:
+          - lvm2
+          - cgit
+        state: present
+
+    - name: Make sure servers group exists
+      group:
+        name: servers
+
+    - name: Make a user for the cgit server
+      user:
+        name: cgit
+        update_password: on_create
+        password: "{{ cgit_password|password_hash('sha512') }}"
+        create_home: yes
+        home: /opt/cgit
+        groups: servers
+
+    - name: Make an LV for the cgit server home
+      lvol:
+        vg: "{{ vg_name }}"
+        lv: "{{ cgit_lv_name }}"
+        size: "{{ cgit_lv_size }}"
