@@ -31,7 +31,7 @@
         update_password: on_create
         password: "{{ cgit_password|password_hash('sha512') }}"
         create_home: yes
-        home: /opt/cgit
+        home: "{{ cgit_home }}"
         groups: servers
 
     - name: Make an LV for the cgit server home
@@ -39,3 +39,15 @@
         vg: "{{ vg_name }}"
         lv: "{{ cgit_lv_name }}"
         size: "{{ cgit_lv_size }}"
+
+    - name: Format the ext4 file system on the LV
+      filesystem:
+        fstype: "{{ cgit_lv_fstype }}"
+        dev: "/dev/{{ vg_name }}/{{ cgit_lv_name }}"
+
+    - name: Mount the LV on cgit server's home
+      mount:
+        path: "{{ cgit_home }}"
+        src: "/dev/{{ vg_name }}/{{ cgit_lv_name }}"
+        fstype: "{{ cgit_lv_fstype }}"
+        state: mounted

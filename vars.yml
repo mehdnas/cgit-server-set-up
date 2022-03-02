@@ -2,6 +2,9 @@
 - disk_device: /dev/sda
 - resulting_partition: /dev/sda1
 - vg_name: raspi_server_vg
+
 - cgit_password: "UnsafeTestingPass"
+- cgit_home: /opt/cgit
 - cgit_lv_name: cgit_lv
 - cgit_lv_size: 1G
+- cgit_lv_fstype: ext4
